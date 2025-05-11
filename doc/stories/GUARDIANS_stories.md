@@ -8,7 +8,7 @@ This is an opinionated first take on some important user stories for a national 
 
 * We’ve taken a maximalist interpretation of the concept of ‘user’: as someone that interacts with the system in some capacity [\[1\]](?tab=t.0#bookmark=id.roq4hcx5yo20). Importantly, this includes the design, development, and operation of systems as well as ‘consumer-level’ interactions.
 
-## ---
+---
 
 ## Twenty-five user stories
 
@@ -129,6 +129,16 @@ This is an opinionated first take on some important user stories for a national 
 | **Managed workflow service** | e.g. Seqera, Terra |
 | **Researcher** | A (potential) consumer of the data and/or compute resources available in the ecoystem |
 | **Trusted Research Environment** | A compute environment set up for research with sensitive data that has built-in security controls and user access management features. The [SARTRE](https://satre-specification.readthedocs.io/en/stable/faqs.html#what-tre) spec has detailed guidance on what constitutes a TRE. |
+
+---
+
+![internal personae](../../diagrams/GUARDIANS_all_internal.png "Internal Personae")
+
+![all](../../diagrams/GUARDIANS_all.png "All")
+
+![journey 1](../../diagrams/GUARDIANS_researcher_journey_1.png "Journey 1")
+
+![journey 2](../../diagrams/GUARDIANS_researcher_journey_2.png "Journey 2")
 
 ---
 
