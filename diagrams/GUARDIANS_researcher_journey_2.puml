@@ -1,0 +1,96 @@
+@startuml
+
+/'
+validate: actors are all present, correctly named and aliased
+validate: packages are all present, correctly named and aliased
+validate: usecases are all present, correctly named and aliased
+validate: usecases are labelled with user stories as appropriate
+validate: user stories are all represented in use-cases
+validate: actors are associated with the correct use cases
+'/
+
+
+left to right direction
+
+<style>
+usecase {
+  BackGroundColor HoneyDew;
+  BorderColor DarkGreen
+}
+</style>
+
+legend top left
+<b>Legend</b>
+Researcher journey 2
+<u>Use Case Label</u> = corresponds directly to a User Story
+endlegend
+
+cloud "Omics Research Data Infrastructure" {
+
+'------------------------------------------------------------------
+
+package "Trust & Identity" {
+
+usecase "Authenticate using credentials" as UC_TI_auth
+usecase "Login to services using federated identity" as UC_TI_fedid_login
+'usecase "Provide discovery service / login selector" as UC_TI_provide_discovery
+
+}
+
+UC_TI_fedid_login .> UC_TI_auth : <<extend>>
+
+'------------------------------------------------------------------
+
+package "Compute Environment" {
+
+usecase "Use TRE for analysis" as UC_CE_TRE_analysis
+usecase "Use general-purpose compute environment" as UC_CE_GP
+usecase "Use managed workflow service" as UC_CE_WF
+usecase "Use custom omics analysis platform" as UC_CE_omics_analysis
+
+}
+
+'------------------------------------------------------------------
+
+package "Data Discovery and Exploration" {
+
+usecase "Browse dataset catalog" as UC_DDE_browse_catalog
+usecase "Access metadata and descriptions" as UC_DDE_metadata
+usecase "Explore and filter cohorts" as UC_DDE_explore_filter
+
+}
+
+'------------------------------------------------------------------
+
+package "Access Control" {
+
+usecase "Request access to data" as UC_AC_request_data
+usecase "Request access to data in TRE" as UC_AC_request_TRE
+usecase "Request access to compute resources" as UC_AC_request_compute
+
+usecase "Select desired data" as UC_AC_select_data
+usecase "Complete data request form" as UC_AC_complete_data_form
+
+}
+
+UC_AC_request_data -.> UC_AC_select_data : <<include>>
+UC_AC_request_data -.> UC_AC_complete_data_form : <<include>>
+
+}
+
+'------------------------------------------------------------------
+
+actor Researcher
+Researcher --> UC_DDE_browse_catalog : <<US1>>
+Researcher --> UC_DDE_metadata : <<US2>>
+Researcher --> UC_DDE_explore_filter
+Researcher --> UC_TI_auth : <<US3>>
+Researcher --> UC_AC_request_data : <<US3>>
+Researcher --> UC_AC_request_TRE : <<US4>>
+Researcher --> UC_AC_request_compute : <<US5>>
+Researcher --> UC_CE_TRE_analysis : <<US7>>
+Researcher --> UC_CE_GP : <<US8>>
+Researcher --> UC_CE_WF : <<US9>>
+Researcher --> UC_CE_omics_analysis : <<US10>>
+
+@enduml
