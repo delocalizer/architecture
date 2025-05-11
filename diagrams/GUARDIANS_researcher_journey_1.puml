@@ -1,0 +1,77 @@
+@startuml
+
+/'
+validate: actors are all present, correctly named and aliased
+validate: packages are all present, correctly named and aliased
+validate: usecases are all present, correctly named and aliased
+validate: usecases are labelled with user stories as appropriate
+validate: user stories are all represented in use-cases
+validate: actors are associated with the correct use cases
+'/
+
+left to right direction
+
+<style>
+usecase {
+  BackGroundColor HoneyDew;
+  BorderColor DarkGreen
+}
+</style>
+
+legend top left
+<b>Legend</b>
+Researcher journey 1
+<u>Use Case Label</u> = corresponds directly to a User Story
+endlegend
+
+cloud "Omics Research Data Infrastructure" {
+
+'------------------------------------------------------------------
+
+package "Trust & Identity" {
+
+usecase "Authenticate using credentials" as UC_TI_auth
+usecase "Login to services using federated identity" as UC_TI_fedid_login
+
+}
+
+UC_TI_fedid_login .> UC_TI_auth : <<extend>>
+
+'------------------------------------------------------------------
+
+package "Data Repository" {
+
+usecase "Browse dataset catalog" as UC_DR_browse_catalog
+usecase "Fetch dataset to external environment" as UC_DR_retrieve
+
+}
+
+'------------------------------------------------------------------
+
+package "Access Control" {
+
+usecase "Request access to data" as UC_AC_request_data
+usecase "Request access to data in TRE" as UC_AC_request_TRE
+usecase "Request access to compute resources" as UC_AC_request_compute
+
+usecase "Select desired data" as UC_AC_select_data
+usecase "Complete data request form" as UC_AC_complete_data_form
+
+}
+
+UC_AC_request_data -.> UC_AC_select_data : <<include>>
+UC_AC_request_data -.> UC_AC_complete_data_form : <<include>>
+
+}
+
+'------------------------------------------------------------------
+
+actor Researcher
+Researcher --> UC_DR_browse_catalog : <<US1>>
+Researcher --> UC_TI_auth : <<US3>>
+Researcher --> UC_AC_request_data : <<US3>>
+Researcher --> UC_AC_request_TRE : <<US4>>
+Researcher --> UC_AC_request_compute : <<US5>>
+Researcher --> UC_DR_retrieve : <<US6>>
+
+@enduml

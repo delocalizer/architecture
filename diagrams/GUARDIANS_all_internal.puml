@@ -1,0 +1,183 @@
+@startuml
+
+/'
+validate: actors are all present, correctly named and aliased
+validate: packages are all present, correctly named and aliased
+validate: usecases are all present, correctly named and aliased
+validate: usecases are labelled with user stories as appropriate
+validate: user stories are all represented in use-cases
+validate: actors are associated with the correct use cases
+'/
+
+left to right direction
+
+<style>
+usecase {
+  BackGroundColor HoneyDew;
+  BorderColor DarkGreen
+}
+</style>
+
+legend top left
+<b>Legend</b>
+Internal personae view
+<u>Use Case Label</u> = corresponds directly to a User Story
+endlegend
+
+cloud "Omics Research Data Infrastructure" {
+
+'------------------------------------------------------------------
+
+actor "AAI Provider" as AAI_Provider
+actor "Clinical Research Coordinator" as CRC
+actor "Compute Resource Provider" as Compute_Provider
+actor "Data Custodian" as Custodian
+actor "Data Owner" as Owner
+actor "Data Steward" as Steward
+actor "ELSI SME" as ELSI
+actor "Web Service/API Provider" as API_Provider
+
+'------------------------------------------------------------------
+
+package "Data Governance" {
+
+usecase "Create policy guidance" as UC_DG_create_policy_guidance
+usecase "Interpret policy guidance" as UC_DG_interpret_policy_guidance
+usecase "Create data use policy" as UC_DG_create_policy 
+usecase "Create data use rules" as UC_DG_create_rules 
+usecase "Interpret data use policy" as UC_DG_interpret_policy
+usecase "Generate consent status reports" as UC_DG_consent_reporting 
+
+}
+
+UC_DG_create_policy -.> UC_DG_interpret_policy_guidance : <<include>>
+UC_DG_create_rules -.> UC_DG_interpret_policy : <<include>>
+
+Owner --> UC_DG_create_policy : <<US11>>
+Steward ---> UC_DG_create_rules : <<US17>>
+CRC --> UC_DG_consent_reporting : <<US24>>
+ELSI --> UC_DG_create_policy_guidance
+
+'------------------------------------------------------------------
+
+package "Service Discovery" {
+
+usecase "Describe API endpoints with standard protocols" as API1
+
+}
+
+API_Provider ---> API1 : <<US25>>
+
+'------------------------------------------------------------------
+
+package "Trust & Identity" {
+
+usecase "Authenticate using credentials" as UC_TI_auth
+usecase "Login to services using federated identity" as UC_TI_fedid_login
+usecase "Provide discovery service / login selector" as UC_TI_provide_discovery
+
+}
+
+UC_TI_fedid_login -.> UC_TI_auth : <<extend>>
+
+AAI_Provider ---> UC_TI_provide_discovery
+
+'------------------------------------------------------------------
+
+package "Data Repository" {
+
+usecase "Browse dataset catalog" as UC_DR_browse_catalog
+usecase "Fetch dataset to external environment" as UC_DR_retrieve
+usecase "Store data in trusted repository" as UC_DR_store_data
+usecase "Implement authorized access" as UC_DR_implement_authz_access
+usecase "Maintain secure resilient storage" as UC_DR_secure_storage
+usecase "Provide high-bandwidth access" as UC_DR_provide_high_bw_access
+
+}
+
+usecase "Host Data Repository" as UC_Host_Repository
+UC_Host_Repository == "Data Repository"
+
+Owner --> UC_DR_store_data : <<US12>>
+Custodian --> UC_Host_Repository
+Custodian ---> UC_DR_implement_authz_access : <<US19>>
+Custodian ---> UC_DR_secure_storage : <<US20>>
+Custodian ---> UC_DR_provide_high_bw_access : <<US21>>
+
+'------------------------------------------------------------------
+
+package "Compute Environment" {
+
+usecase "Use TRE for analysis" as UC_CE_TRE_analysis
+usecase "Use general-purpose compute environment" as UC_CE_GP
+usecase "Use managed workflow service" as UC_CE_WF
+usecase "Use custom omics analysis platform" as UC_CE_omics_analysis
+usecase "Track system resource use" as UC_CE_track_usage
+
+}
+
+usecase "Host Compute Environment" as UC_Host_Compute
+UC_Host_Compute == "Compute Environment"
+
+Compute_Provider --> UC_Host_Compute
+Compute_Provider --> UC_CE_track_usage : <<US23>>
+
+'------------------------------------------------------------------
+
+package "Data Discovery and Exploration" {
+
+usecase "Browse dataset catalog" as UC_DDE_browse_catalog
+usecase "Access metadata and descriptions" as UC_DDE_metadata
+usecase "Annotate datasets with ontologies" as UC_DDE_annotate 
+usecase "Provide data in standard formats" as UC_DDE_data_format
+usecase "Explore and filter cohorts" as UC_DDE_explore_filter
+
+}
+
+Steward ---> UC_DDE_annotate : <<US15>>
+Steward ---> UC_DDE_data_format : <<US16>>
+
+'------------------------------------------------------------------
+
+
+package "Access Control" {
+
+usecase "Configure system" as UC_AC_config
+usecase "Implement data use rules" as UC_AC_implement_rules
+
+usecase "Request access to data" as UC_AC_request_data
+usecase "Request access to data in TRE" as UC_AC_request_TRE
+usecase "Request access to compute resources" as UC_AC_request_compute
+
+usecase "Select desired data" as UC_AC_select_data
+usecase "Complete data request form" as UC_AC_complete_data_form
+
+usecase "Review resource request" as UC_AC_review_resource_request
+usecase "Action resource request" as UC_AC_action_request
+usecase "Grant/deny/revoke access to resources" as UC_AC_control_resource
+
+usecase "Generate audit reports" as UC_AC_reporting
+
+}
+
+usecase "Host Access Control system" as UC_Host_AC
+UC_Host_AC == "Access Control"
+
+UC_AC_config <.- UC_AC_implement_rules : <<extend>
+UC_AC_select_data <.- UC_AC_request_data : <<include>>
+UC_AC_complete_data_form <.- UC_AC_request_data : <<include>>
+UC_AC_action_request -.> UC_AC_review_resource_request: <<include>>
+UC_AC_action_request -.> UC_AC_control_resource : <<extend>>
+
+Custodian --> UC_Host_AC : <<US18>>
+
+Steward ---> UC_AC_config : <<US17>>
+Owner --> UC_AC_action_request : <<US13>>
+Owner --> UC_AC_reporting : <<US14>>
+Compute_Provider ---> UC_AC_action_request : <<US22>>
+
+}
+
+'------------------------------------------------------------------
+
+@enduml
